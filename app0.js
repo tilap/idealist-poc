@@ -1,6 +1,8 @@
 Tasks = new Mongo.Collection("tasks");
 
 if (Meteor.isClient) {
+  Meteor.subscribe("ideas");
+
   Template.body.helpers({
     tasks: function () {
       return Tasks.find({}, {sort: {createdAt: -1}});
@@ -12,19 +14,25 @@ if (Meteor.isClient) {
       return Tasks.find().count();
     },
     displayAdd : function() {
-      return Session.get("screenState")=='add';
+      return Meteor.userId() && Session.get("screenState")=='add';
     },
     displayWelcome: function() {
       return Session.get("screenState")=='welcome';
     },
     displayDetails: function() {
-      return Session.get("screenState")=='details';
+      return Meteor.userId() && Session.get("screenState")=='details';
+    }
+  });
+
+  Template.task.helpers({
+    isOwner: function () {
+      return this.owner === Meteor.userId();
     }
   });
 
   Template.task.events({
     "click .delete": function () {
-      Tasks.remove(this._id);
+      Meteor.call("deleteIdea", this._id);
     }
   });
 
@@ -36,16 +44,11 @@ if (Meteor.isClient) {
         alert('You must provide a title');
         return false;
       }
-      Tasks.insert({
-        title: title,
-        details: details,
-        owner: Meteor.userId(),
-        username: Meteor.user().username,
-        createdAt: new Date()
-      });
 
-      title.value = "";
-      details.value = "";
+      Meteor.call("addIdea", title, details);
+
+      document.getElementById('new-idea-title').value = "";
+      document.getElementById('new-idea-details').value = "";
 
       Session.set("screenState", 'welcome');
       return false;
@@ -62,5 +65,35 @@ if (Meteor.isClient) {
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   });
+  
   Session.set("screenState", 'welcome');
 }
+
+if (Meteor.isServer) {
+  Meteor.publish("ideas", function () {
+    return Tasks.find();
+  });
+}
+
+Meteor.methods({
+  addIdea: function (title, details) {
+    if (! Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    Tasks.insert({
+        title: title,
+        details: details,
+        owner: Meteor.userId(),
+        username: Meteor.user().username,
+        createdAt: new Date()
+      });
+  },
+  deleteIdea: function (ideaId) {
+    var idea = Tasks.findOne(ideaId);
+    if (idea.owner !== 12) {
+      throw new Meteor.Error("not-authorized");
+    }
+    Tasks.remove(taskId);
+  }
+});

@@ -12,7 +12,9 @@
 
     <div class="app-nav-wrapper">
       <span class="count">{{totalCount}} ideas</span>
+      {{# if currentUser}}
       <span class="btn primary show-addform">Add</span>
+      {{/if}}
     </div>
 
     <h1 class="site-title">ideaList</h1>
@@ -39,7 +41,15 @@
 
     <div class="welcome-wrapper content-toggler {{#if displayWelcome}}displayed{{/if}}">
       <h2>Hello !</h2>
-      <p>See an idea details by clicking on the sidelist or add your own!<br /><span class="btn primary show-addform">Add an idea</span></p>
+      <p>
+        See an idea details by clicking on the sidelist 
+        {{# if currentUser}}
+          or add your own!<br />
+          <span class="btn primary show-addform">Add an idea</span>
+        {{else}}
+          or login in to add your own!
+        {{/if}}
+      </p>
     </div>
 
     <div class="details-wrapper content-toggler {{#if displayDetails}}displayed{{/if}}">
@@ -49,7 +59,7 @@
 </body>
 
 <template name="task">
-  <li class="{{#if checked}}checked{{/if}}">
+  <li class="{{#if checked}}checked{{/if}} {{#if isOwner}}mine{{/if}}">
     <span class="text">{{title}}</span>
     <button class="delete">&times;</button>
   </li>

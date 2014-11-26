@@ -338,6 +338,16 @@ body {
   border-bottom: 1px solid #555;
 }
 
+.list-wrapper ul li.mine:before {
+  content: '*';
+}
+.list-wrapper ul li .delete{
+  display: none;
+}
+.list-wrapper ul li.mine .delete{
+  display: inline-block;
+}
+
 .list-wrapper ul li button {
   float: right;
   border: none;

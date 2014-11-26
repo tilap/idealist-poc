@@ -1,0 +1,56 @@
+<!-- simple-todos.html -->
+<head>
+  <title>Todo List</title>
+</head>
+
+<body>
+  <div class="header-wrapper">
+
+    <div class="user-nav-wrapper">
+      {{> loginButtons}}
+    </div>
+
+    <div class="app-nav-wrapper">
+      <span class="count">{{totalCount}} ideas</span>
+      <span class="btn primary show-addform">Add</span>
+    </div>
+
+    <h1 class="site-title">ideaList</h1>
+  </div>
+  
+  <div class="list-wrapper">
+    <ul>
+      {{#each tasks}}
+        {{> task}}
+      {{/each}}
+    </ul>
+  </div>
+  
+  <div class="main-wrapper">
+    
+    <div class="add-wrapper content-toggler {{#if displayAdd}}displayed{{/if}}">
+      <form class="new-idea">
+        <input type="text" id="new-idea-title" placeholder="Your idea in a few words">
+        <textarea id="new-idea-details" placeholder="Explain your idea"></textarea>
+        <button class="btn primary save">Save</button>
+        <span class="btn cancel show-welcome">Cancel</span>
+      </form>
+    </div>
+
+    <div class="welcome-wrapper content-toggler {{#if displayWelcome}}displayed{{/if}}">
+      <h2>Hello !</h2>
+      <p>See an idea details by clicking on the sidelist or add your own!<br /><span class="btn primary show-addform">Add an idea</span></p>
+    </div>
+
+    <div class="details-wrapper content-toggler {{#if displayDetails}}displayed{{/if}}">
+      Vue du détail
+    </div>
+  </div>
+</body>
+
+<template name="task">
+  <li class="{{#if checked}}checked{{/if}}">
+    <span class="text">{{title}}</span>
+    <button class="delete">&times;</button>
+  </li>
+</template>
